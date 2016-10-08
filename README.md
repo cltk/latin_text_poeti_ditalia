@@ -1,2 +1,3 @@
-# latin_text_poeti_ditalia
-Corpus for Italian Poetry in Latin
+# About
+
+Poeti d'Italia in lingua latina ("Italian poets in Latin") is a text corpus available at <http://www.poetiditalia.it/public/>.
