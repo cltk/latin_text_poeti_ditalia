@@ -1,18 +1,22 @@
 import os, re
 import json
 import pdb
+from django.utils.text import slugify
 import collections
 
 sourceLink = 'http://www.poetiditalia.it/public/'
 source = 'Poeti d’Italia in lingua latina'
 works = []
 
-def walkText(text):
+def jaggedListToDict(text):
 	node = { str(i): t for i, t in enumerate(text) }
-	node = collections.OrderedDict(sorted(node.items()))
+	node = collections.OrderedDict(sorted(node.items(), key=lambda k: int(k[0])))
 	for child in node:
 		if isinstance(node[child], list):
-			node[child] = walkText(node[child])
+			if len(node[child]) == 1:
+				node[child] = node[child][0]
+			else:
+				node[child] = jaggedListToDict(node[child])
 	return node
 
 def main():
@@ -87,8 +91,8 @@ def main():
 					except ValueError:
 						text.append(node)
 
-				work['text'] = walkText(text)
-				fname = work['source'] + '__' + work['englishTitle'] + '__' + work['language'] + '.json'
+				work['text'] = jaggedListToDict(text)
+				fname = slugify(work['source']) + '__' + slugify(work['englishTitle'][0:140]) + '__' + slugify(work['language']) + '.json'
 				fname = fname.replace(" ", "")
 				with open('cltk_json/' + fname, 'w') as f:
 					json.dump(work, f)
